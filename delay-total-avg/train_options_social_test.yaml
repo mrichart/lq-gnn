@@ -1,0 +1,22 @@
+# PATHS
+train_dataset: ./data/train_valid
+validation_dataset: ./data/test_valid
+additional_functions_file: ./additional_functions.py
+output_path: ./
+load_model_path: ./CheckPoint/experiment_2024_09_13_07_40_00/ckpt/weights.50-0.031
+
+# OPTIMIZATION OPTIONS
+loss: MeanSquaredError
+optimizer:
+  type: Adam
+metrics: [MeanAbsolutePercentageError, MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError, MeanSquaredLogarithmicError]
+
+# TRAINING OPTIONS
+batch_size: 64
+epochs: 50
+epoch_size: 1250
+shuffle_training_set: True
+shuffle_validation_set: False
+val_samples: 8934
+val_frequency: 1
+#initial_epoch: 84

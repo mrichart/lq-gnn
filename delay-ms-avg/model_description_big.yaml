@@ -1,0 +1,125 @@
+entities:
+- name: task
+  state_dimension: 8
+  initial_state:
+    - type: build_state
+      input: [$num_threads, $num_cores]
+- name: activity
+  state_dimension: 8
+  initial_state:
+    - type: build_state
+      input: [$proc_delay, $blocking]
+- name: path
+  state_dimension: 8
+  initial_state:
+    - type: build_state
+      input: [$load]
+
+message_passing:
+  num_iterations: 8
+  stages:
+    #STAGE 1 - Activity to path:
+    - stage_message_passings:
+      # activities to path
+      - destination_entity: path
+        source_entities:
+          - name: activity
+            message:
+              - type: direct_assignment
+        aggregation:
+          - type: ordered
+        update:
+          type: neural_network
+          nn_name: path_update
+    #STAGE 2 - Path and tasks to activity:
+    - stage_message_passings:
+      - destination_entity: activity
+        source_entities:
+          - name: path
+            message:
+              - type: direct_assignment
+          - name: task
+            message:
+              - type: direct_assignment
+          - name: activity
+            message:
+              - type: neural_network
+                nn_name: activity_to_activity
+                input: [source, destination, $in_out]
+        aggregation:
+          - type: edge_attention
+            nn_name: edge_att_nn
+        update:
+          type: neural_network
+          nn_name: activity_update
+    #STAGE 3 - activity to task
+    - stage_message_passings:
+      # activities to task
+      - destination_entity: task
+        source_entities:
+          - name: activity
+            message:
+              - type: direct_assignment
+        aggregation:
+          - type: ordered
+        update:
+          type: neural_network
+          nn_name: task_update
+
+# Definition of the readout
+readout:
+- type: neural_network
+  input: [task]
+  nn_name: readout_path
+  output_label: [$ms_avg_rt]
+
+# Definition of the Neural Networks
+neural_networks:
+- nn_name: readout_path
+  nn_architecture:
+  - type_layer: Dense
+    units: 32
+    activation: relu
+  - type_layer: Dense
+    units: 32
+    activation: relu
+  - type_layer: Dense
+    units: 1
+    activation: None
+
+- nn_name: readout_sum
+  nn_architecture:
+  - type_layer: Dense
+    units: 32
+    activation: relu
+  - type_layer: Dense
+    units: 1
+    activation: None
+
+- nn_name: path_update
+  nn_architecture:
+  - type_layer: GRU
+
+- nn_name: activity_to_activity
+  nn_architecture:
+  - type_layer: Dense
+    units: 32
+    activation: relu
+  - type_layer: Dense
+    units: 8
+    activation: relu
+
+- nn_name: edge_att_nn
+  nn_architecture:
+  - type_layer: Dense
+    units: 1
+    activation: leaky_relu
+
+- nn_name: activity_update
+  nn_architecture:
+    - type_layer: GRU
+
+- nn_name: task_update
+  nn_architecture:
+    - type_layer: GRU
+
