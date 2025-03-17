@@ -1,7 +1,7 @@
-# OPTIMAIX MAPS - MS-GNN
+# LQ-GNN: A Graph Neural Network Model for Response Time Prediction of Microservice-based Applications in the Computing Continuum
 
 ## Overview
-This module implements the MS-GNN model and related tools, leveraging Graph Neural Networks (GNN) to predict response times of microservice-based applications.
+This code implements the LQ-GNN model and related tools, leveraging Graph Neural Networks (GNN) to predict response times of microservice-based applications.
 
 ## Features
 - GNN implementation using the IGNNITION framework
@@ -9,9 +9,6 @@ This module implements the MS-GNN model and related tools, leveraging Graph Neur
 - Training and evaluation scripts
 
 ## Directories
-
-### ignnition-models
-Contains the GNN model implementation and data pre-processing scripts.
 
 #### Model Versions
 Six model versions tailored to specific prediction objectives:
@@ -29,9 +26,6 @@ Four training sets with scripts for pre-processing uqsim simulator data to creat
 - **social-network-ut**: Mimics a social-network application's user timeline read requests.
 - **mix**: Combination of the above three applications.
 
-### uqsim-cluster-run
-Scripts to run GNN training on `cluster.uy` machines.
-
 ## Installation
 Install dependencies with:
 ```bash
@@ -39,6 +33,8 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+
+For training the model we use data generated with an extension of the uqSim Simulator available in: https://github.com/mrichart/uqsim-simulator
 
 ### Data generation using uqSim (for each application to simulate)
 
